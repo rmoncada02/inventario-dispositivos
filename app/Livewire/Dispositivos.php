@@ -13,20 +13,27 @@ class Dispositivos extends Component
     public $search = '';
     public $ubicacion, $categoria, $encargado, $marca, $modelo, $numero_serie, $id_dispositivo;
     public $modal = false;
-    protected $dispositivos; 
+    
+
+    public function actualizarBusqueda()
+{
+    $this->resetPage();
+}
 
     public function render()
     {
-        $this->dispositivos = Dispositivo::where('ubicacion', 'like', '%'.$this->search.'%')
-            ->orWhere('categoria', 'like', '%'.$this->search.'%')
-            ->orWhere('encargado', 'like', '%'.$this->search.'%')
-            ->orWhere('marca', 'like', '%'.$this->search.'%')
-            ->orWhere('modelo', 'like', '%'.$this->search.'%')
-            ->orWhere('numero_serie', 'like', '%'.$this->search.'%')
+        $dispositivos = Dispositivo::where(function($query) {
+                $query->where('ubicacion', 'like', '%'.$this->search.'%')
+                      ->orWhere('categoria', 'like', '%'.$this->search.'%')
+                      ->orWhere('encargado', 'like', '%'.$this->search.'%')
+                      ->orWhere('marca', 'like', '%'.$this->search.'%')
+                      ->orWhere('modelo', 'like', '%'.$this->search.'%')
+                      ->orWhere('numero_serie', 'like', '%'.$this->search.'%');
+            })
             ->paginate(10);
 
         return view('livewire.dispositivos', [
-            'dispositivos' => $this->dispositivos, 
+            'dispositivos' => $dispositivos
         ])->layout('layouts.app');
     }
 
