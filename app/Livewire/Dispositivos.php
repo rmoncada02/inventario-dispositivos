@@ -13,7 +13,7 @@ class Dispositivos extends Component
     public $search = '';
     public $ubicacion, $categoria, $encargado, $marca, $modelo, $numero_serie, $id_dispositivo;
     public $modal = false;
-    protected $dispositivos; // Cambio aquí
+    protected $dispositivos; 
 
     public function render()
     {
@@ -26,7 +26,7 @@ class Dispositivos extends Component
             ->paginate(10);
 
         return view('livewire.dispositivos', [
-            'dispositivos' => $this->dispositivos, // Pasando $this->dispositivos en lugar de $dispositivos
+            'dispositivos' => $this->dispositivos, 
         ])->layout('layouts.app');
     }
 
