@@ -3,18 +3,31 @@
 namespace App\Livewire;
 
 use Livewire\Component;
+use Livewire\WithPagination;
 use App\Models\Dispositivo;
+
 class Dispositivos extends Component
 {
-    
-    public $dispositivos, $ubicacion, $categoria, $encargado, $marca, $modelo, $numero_serie, $id_dispositivo;
+    use WithPagination;
+
+    public $search = '';
+    public $ubicacion, $categoria, $encargado, $marca, $modelo, $numero_serie, $id_dispositivo;
     public $modal = false;
+    protected $dispositivos; // Cambio aquí
 
     public function render()
     {
-        $this->dispositivos = Dispositivo::all();
-        return view('livewire.dispositivos')
-            ->layout('layouts.app'); 
+        $this->dispositivos = Dispositivo::where('ubicacion', 'like', '%'.$this->search.'%')
+            ->orWhere('categoria', 'like', '%'.$this->search.'%')
+            ->orWhere('encargado', 'like', '%'.$this->search.'%')
+            ->orWhere('marca', 'like', '%'.$this->search.'%')
+            ->orWhere('modelo', 'like', '%'.$this->search.'%')
+            ->orWhere('numero_serie', 'like', '%'.$this->search.'%')
+            ->paginate(10);
+
+        return view('livewire.dispositivos', [
+            'dispositivos' => $this->dispositivos, // Pasando $this->dispositivos en lugar de $dispositivos
+        ])->layout('layouts.app');
     }
 
     public function crear()
@@ -26,18 +39,21 @@ class Dispositivos extends Component
     public function abrirModal() {
         $this->modal = true;
     }
+
     public function cerrarModal() {
         $this->modal = false;
     }
+
     public function limpiarCampos(){
         $this->ubicacion = '';
         $this->categoria = '';
-        $this->encargado ='';
+        $this->encargado = '';
         $this->marca = '';
         $this->modelo = '';
-        $this->numero_serie= '';
+        $this->numero_serie = '';
         $this->id_dispositivo = '';
     }
+
     public function editar($id)
     {
         $dispositivo = Dispositivo::findOrFail($id);
@@ -59,20 +75,19 @@ class Dispositivos extends Component
 
     public function guardar()
     {
-        Dispositivo::updateOrCreate(['id'=>$this->id_dispositivo],
-            [
-                'ubicacion' => $this->ubicacion,
-                'categoria' => $this->categoria,
-                'encargado' => $this->encargado,
-                'marca' => $this->marca,
-                'modelo' => $this->modelo,
-                'numero_serie' => $this->numero_serie,
-            ]);
-         
-         session()->flash('message',
+        Dispositivo::updateOrCreate(['id' => $this->id_dispositivo], [
+            'ubicacion' => $this->ubicacion,
+            'categoria' => $this->categoria,
+            'encargado' => $this->encargado,
+            'marca' => $this->marca,
+            'modelo' => $this->modelo,
+            'numero_serie' => $this->numero_serie,
+        ]);
+
+        session()->flash('message', 
             $this->id_dispositivo ? '¡Actualización exitosa!' : '¡Alta Exitosa!');
-         
-         $this->cerrarModal();
-         $this->limpiarCampos();
+
+        $this->cerrarModal();
+        $this->limpiarCampos();
     }
 }

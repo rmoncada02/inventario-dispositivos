@@ -8,5 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class Dispositivo extends Model
 {
     use HasFactory;
-    protected $fillable= ['ubicacion','categoria','encargado','marca','modelo','numero_serie'];
+
+    protected $fillable = [
+        'ubicacion', 'categoria', 'encargado', 'marca', 'modelo', 'numero_serie'
+    ];
 }
