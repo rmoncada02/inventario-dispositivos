@@ -13,7 +13,8 @@ class Dispositivos extends Component
     public function render()
     {
         $this->dispositivos = Dispositivo::all();
-        return view('livewire.dispositivos');
+        return view('livewire.dispositivos')
+            ->layout('layouts.app'); 
     }
 
     public function crear()
